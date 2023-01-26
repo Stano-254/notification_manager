@@ -3,11 +3,15 @@ omit=
     *apps.py,
     *migrations/*,
     *settings*,
-    *tests/*
+    *tests/*,
+    *tests.py,
     *urls.py,
     *env/*,
     *venv/*,
     */__init__.py,
     */asgi.py,
-    */apps.py
+    *wsgi.py,
+    *services.py,
+    *servicebase.py,
+    */apps.py,
     manage.py
