@@ -31,14 +31,7 @@ jobs:
           pip install pytest-cov
           pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
       - name: Code Coverage Report
-        run: |
-          echo "## Code Coverage Report"
-          echo ""
-          echo "Coverage summary:"
-          echo ""
-          echo "```"
-          python -m coverage report
-          echo "```"
+        run: coverage report
 
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
