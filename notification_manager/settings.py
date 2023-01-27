@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
     'core',
 ]
 
@@ -86,6 +85,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+TOKEN_EXPIRY_MINUTES = 20
 
 AUTH_PASSWORD_VALIDATORS = [
     {
