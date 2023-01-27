@@ -31,9 +31,9 @@ jobs:
           pip install pytest-cov
           pytest --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
       - name: Code Coverage Report
-        run: |
-          coverage report -m
-          coverage html
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: coverage/**/coverage.cobertura.xml
           badge: true
           fail_below_min: true
           format: markdown
@@ -48,4 +48,4 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           recreate: true
-          path: htmlcov/index.html
+          path: code-coverage-results.md
