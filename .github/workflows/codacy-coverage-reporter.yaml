@@ -13,18 +13,23 @@ jobs:
       matrix:
         python-version: [ "3.8", "3.9", "3.10" ]
     environment: GIT_HUB_ACTIONS
-
+    outputs:
+      pytest: ${{ steps.4.outputs.pytest}}
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
+      - id: 1
+        uses: actions/checkout@v3
+      - id: 2
+        name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Install dependencies
+      - id: 3
+        name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Test with pytest
+      - id: 4
+        name: Test with pytest
         run: |
           pip install pytest
           pip install pytest-cov
@@ -36,9 +41,11 @@ jobs:
     environment: GIT_HUB_ACTIONS
     steps:
       - uses: actions/checkout@v3
+
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
-          coverage-reports: coverage.xml
+          coverage-reports:
+            - run : echo ${{ needs.build.outputs.pytest }}
       
