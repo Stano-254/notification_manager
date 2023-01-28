@@ -170,7 +170,7 @@ class MessageLog(BaseModel):
 	corporate = models.ForeignKey(Corporate, blank=True, null=True, on_delete=models.CASCADE)
 	destination = models.CharField(max_length=100, blank=True, null=True)
 	message = models.TextField(max_length=1500, blank=True, null=True)
-	message_types = models.ForeignKey(MessageType, on_delete=models.CASCADE)
+	message_type = models.ForeignKey(MessageType, on_delete=models.CASCADE)
 	confirmation_code = models.CharField(max_length=60, blank=True, null=True)
 	source_ip = models.CharField(max_length=20, blank=True, null=True)
 	request = models.CharField(max_length=500, null=True, blank=True)
