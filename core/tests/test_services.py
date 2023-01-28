@@ -14,8 +14,8 @@ pytestmark = pytest.mark.django_db
 
 
 class TestStateService(object):
-
-	def test_get(self):
+	@staticmethod
+	def test_get():
 		"""
 		Test State get service
 		"""
@@ -23,7 +23,8 @@ class TestStateService(object):
 		state = StateService().get(name="Active")
 		assert state is not None and state.name == "Active", 'Should have a State object'
 
-	def test_filter(self):
+	@staticmethod
+	def test_filter():
 		"""
 		Test State filter service
 		"""
@@ -31,14 +32,16 @@ class TestStateService(object):
 		state = StateService().filter(name="Active")
 		assert len(state) == 4, 'Should have 4 State objects'
 
-	def test_create(self):
+	@staticmethod
+	def test_create():
 		"""
 		Test StateService create() method
 		"""
 		state = StateService().create(name="Active")
 		assert state is not None, 'Should have a State object'
 
-	def test_update(self):
+	@staticmethod
+	def test_update():
 		"""
 		Test StateService update() method
 		"""
