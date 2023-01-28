@@ -41,10 +41,10 @@ jobs:
     environment: GIT_HUB_ACTIONS
     steps:
       - uses: actions/checkout@v3
-
+      - run: echo ${{needs.buld.outputs.pytest}}
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
-          coverage-reports: ${{ needs.build.outputs.run }}
+          coverage-reports: ${{ needs.build.outputs.pytest }}
       
