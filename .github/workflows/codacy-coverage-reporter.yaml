@@ -1,4 +1,4 @@
-name: Codacy Coverage Reporter
+name: Code Test and Coverage Report
 
 
 on:

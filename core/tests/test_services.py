@@ -14,11 +14,37 @@ pytestmark = pytest.mark.django_db
 
 
 class TestStateService(object):
-
-	def test_get(self):
+	@staticmethod
+	def test_get():
 		"""
 		Test State get service
 		"""
 		mixer.blend('core.State', name="Active")
 		state = StateService().get(name="Active")
+		assert state is not None and state.name == "Active", 'Should have a State object'
+
+	@staticmethod
+	def test_filter():
+		"""
+		Test State filter service
+		"""
+		mixer.cycle(4).blend('core.State', name="Active")
+		state = StateService().filter(name="Active")
+		assert len(state) == 4, 'Should have 4 State objects'
+
+	@staticmethod
+	def test_create():
+		"""
+		Test StateService create() method
+		"""
+		state = StateService().create(name="Active")
 		assert state is not None, 'Should have a State object'
+
+	@staticmethod
+	def test_update():
+		"""
+		Test StateService update() method
+		"""
+		status = mixer.blend('core.State', name="Active")
+		state = StateService().update(status.id, name="Completed")
+		assert state is not None and state.name == "Completed",  'Should have an updated  State object'
