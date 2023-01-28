@@ -47,5 +47,5 @@ jobs:
         with:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
           coverage-reports:
-            - run : echo ${{ needs.build.outputs.run }}
+             echo ${{ needs.build.outputs.run }}
       
