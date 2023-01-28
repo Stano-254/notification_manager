@@ -91,12 +91,14 @@ class Country(GenericBasemodel):
 
 	class Meta:
 		app_label = 'core'
+
+
 class MessageType(GenericBasemodel):
 	"""
 	Define different message types
 	"""
 	code = models.CharField(max_length=10, unique=True)
-	message_type = models.ForeignKey(State, on_delete=models.CASCADE)
+	state = models.ForeignKey(State, on_delete=models.CASCADE)
 
 	def __str__(self):
 		return f"{self.name}"
@@ -153,7 +155,7 @@ class Corporate(GenericBasemodel):
 	Defines different corporate
 	"""
 	core_id = models.CharField(max_length=100)
-	provider = models.ForeignKey(Provider,on_delete=models.CASCADE)
+	provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
 	state = models.ForeignKey(State, on_delete=models.CASCADE)
 
 	def __str__(self):
@@ -164,7 +166,7 @@ class MessageLog(BaseModel):
 	"""
 	Messages logs
 	"""
-	app = models.ForeignKey(App,on_delete=models.CASCADE)
+	app = models.ForeignKey(App, on_delete=models.CASCADE)
 	corporate = models.ForeignKey(Corporate, blank=True, null=True, on_delete=models.CASCADE)
 	destination = models.CharField(max_length=100, blank=True, null=True)
 	message = models.TextField(max_length=1500, blank=True, null=True)

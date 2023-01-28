@@ -12,3 +12,59 @@ class StateService(ServiceBase):
 	State model CRUD services
 	"""
 	manager = State.objects
+
+
+class MessageTypeService(ServiceBase):
+	"""
+	Messagetype model CRUD services
+	"""
+	manager = MessageType.objects
+
+
+class TemplateService(ServiceBase):
+	"""
+	Template model CRUD service
+	"""
+	manager = Template.objects
+
+
+class AppService(ServiceBase):
+	"""
+	App model CRUD service
+	"""
+	manager = App.objects
+
+
+class ProviderService(ServiceBase):
+	"""
+	Provider model CRUD service
+	"""
+	manager = Provider.objects
+
+
+class CorporateService(ServiceBase):
+	"""
+	Corporate model CRUD service
+	"""
+	manager = Corporate.objects
+
+
+class MessageLog(ServiceBase):
+	"""
+	MessageLog model CRUD service
+	"""
+	manager = MessageLog.objects
+
+
+class AppCredentialService(ServiceBase):
+	"""
+	AppCredentials model CRUD service
+	"""
+	manager = AppCredential.objects
+
+
+class OAuthService(ServiceBase):
+	"""
+	OAuth model CRUD service
+	"""
+	manager = OAuth.objects
