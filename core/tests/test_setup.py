@@ -11,6 +11,7 @@ class TestSetUp(TestCase):
 	def setUp(self):
 		self.state_disabled = mixer.blend('core.State', name="Disabled")
 		self.state_active = mixer.blend('core.State', name="Active")
+		self.state_completed = mixer.blend('core.State', name="Completed")
 
 	def tearDown(self):
 		return super().tearDown()

@@ -7,7 +7,8 @@ import pytest
 #
 from mixer.backend.django import mixer
 
-from core.backend.services import StateService, MessageTypeService, TemplateService, AppService, ProviderService
+from core.backend.services import StateService, MessageTypeService, TemplateService, AppService, ProviderService, \
+	CorporateService, MessageLogService, AppCredentialService, OAuthService
 from core.tests.test_setup import TestSetUp
 
 #
@@ -156,71 +157,113 @@ class TestProviderService(TestSetUp):
 
 class TestCorporateService(TestSetUp):
 	"""
-	ProviderService tests
+	CorporateService tests
 	"""
 
 	def test_get(self):
-		pass
+		mixer.blend('core.Corporate', name="Laso", state=self.state_active)
+		corporate = CorporateService().get(name="Laso")
+		self.assertIsNotNone(corporate), "Should return a corporate instance"
 
 	def test_filter(self):
-		pass
+		mixer.cycle(4).blend('core.Corporate', state=self.state_active)
+		corporates = CorporateService().filter(state=self.state_active)
+		self.assertEqual(len(corporates), 4), "Should return 4 corporates"
 
 	def test_create(self):
-		pass
+		provider = mixer.blend('core.Provider', state=self.state_active)
+		corporate = CorporateService().create(
+			name="Lase", core_id="cgdhjfhgfkfnff", provider=provider, state=self.state_active)
+		self.assertIsNotNone(corporate), "Should create Corporate object"
 
 	def test_update(self):
-		pass
+		corporate = mixer.blend('core.Corporate', state=self.state_active)
+		updated_corporate = CorporateService().update(corporate.id, name="Lasoo")
+		self.assertEqual(updated_corporate.name, "Lasoo"), "Should return an updated corporate"
 
 
 class TestMessageLogService(TestSetUp):
 	"""
-	ProviderService tests
+	MessageLog Service tests
 	"""
 
 	def test_get(self):
-		pass
+		message = mixer.blend('core.MessageLog', state=self.state_active)
+		message_log = MessageLogService().get(id=message.id)
+		self.assertIsNotNone(message_log), "Should contain message object"
 
 	def test_filter(self):
-		pass
+		mixer.cycle(4).blend('core.MessageLog', state=self.state_active)
+		message_log = MessageLogService().filter(state=self.state_active)
+		self.assertEqual(len(message_log), 4), "Should return 4 messageLogs"
 
 	def test_create(self):
-		pass
+		app = mixer.blend('core.App', name="Zuku", state=self.state_active)
+		corporate = mixer.blend("core.Corporate", name="Lassoo", state=self.state_active)
+		message_type = mixer.blend('core.MessageType', name="Email", code="EMAIL", state=self.state_active)
+		message_log = MessageLogService().create(
+			app=app, corporate=corporate, message_type=message_type, state=self.state_active)
+		self.assertIsNotNone(message_log), "Should return created message log instance"
 
 	def test_update(self):
-		pass
+		message_log = mixer.blend('core.MessageLog', state=self.state_active)
+		updated_msg_log = MessageLogService().update(message_log.id, state=self.state_completed)
+		self.assertEqual(updated_msg_log.state, self.state_completed)
 
 
 class TestAppCredentialService(TestSetUp):
 	"""
-	ProviderService tests
+	App CredentialsService tests
 	"""
 
 	def test_get(self):
-		pass
+		app_cred = mixer.blend('core.AppCredential', state=self.state_active)
+		app_credentials = AppCredentialService().get(id=app_cred.id)
+		self.assertIsNotNone(app_credentials), "Should return an ap  credential instance"
 
 	def test_filter(self):
-		pass
+		mixer.cycle(4).blend('core.AppCredential', state=self.state_active)
+		app_credentials = AppCredentialService().filter(state=self.state_active)
+		self.assertEqual(len(app_credentials), 4), "Should return 4 app credentials"
 
 	def test_create(self):
-		pass
+		app = mixer.blend('core.App', state=self.state_active)
+		corporate = mixer.blend('core.Corporate', name="Lasso", state=self.state_active)
+		message_type = mixer.blend('core.MessageType', name='Email', code='EMAIL', state=self.state_active)
+		app_credentials = AppCredentialService().create(
+			app=app, corporate=corporate, message_type=message_type, state=self.state_active
+		)
+		self.assertIsNotNone(app_credentials), "Should return created app credentials instance"
 
 	def test_update(self):
-		pass
+		app_cred = mixer.blend('core.AppCredential', state=self.state_active)
+		uppdated_app_cred = AppCredentialService().update(app_cred.id, sender_code="17777")
+		self.assertEqual(uppdated_app_cred.sender_code, '17777'), "Should return updated app credentials"
 
 
 class TestOAuthService(TestSetUp):
 	"""
-	ProviderService tests
+	OAuth Service tests
 	"""
 
 	def test_get(self):
-		pass
+		auth = mixer.blend("core.OAuth", state=self.state_active)
+		oauth = OAuthService().get(id=auth.id)
+		self.assertIsNotNone(oauth), "Should return OAuth object"
 
 	def test_filter(self):
-		pass
+		mixer.cycle(4).blend('core.OAuth', state=self.state_active)
+		oauths = OAuthService().filter(state=self.state_active)
+		self.assertEqual(len(oauths), 4), "Should return four object of OAuth"
 
 	def test_create(self):
-		pass
+		app = mixer.blend('core.App', state=self.state_active)
+		user = mixer.blend('auth.User', state=self.state_active)
+		OAuth = OAuthService().create(app=app, user=user, state=self.state_active)
+		self.assertIsNotNone(OAuth), "Should return OAuth object"
 
 	def test_update(self):
-		pass
+		app = mixer.blend('core.App', name="Test", state=self.state_active)
+		oauth = mixer.blend("core.OAuth", state=self.state_active)
+		updated_oauth = OAuthService().update(oauth.id, app=app)
+		self.assertEqual(updated_oauth.app, app), "should return an updated OAuth object"
