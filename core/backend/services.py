@@ -49,7 +49,7 @@ class CorporateService(ServiceBase):
 	manager = Corporate.objects
 
 
-class MessageLog(ServiceBase):
+class MessageLogService(ServiceBase):
 	"""
 	MessageLog model CRUD service
 	"""
