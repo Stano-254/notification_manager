@@ -1,5 +1,11 @@
 import json
+import re
+from datetime import datetime
 from django.http import HttpResponse, JsonResponse
+import uuid
+import logging
+
+lgr = logging.getLogger(__name__)
 
 
 def get_client_ip(request):
@@ -12,7 +18,27 @@ def get_client_ip(request):
 
 
 def generate_confirmation_key():
-	pass
+	"""
+	function generates confirmation code
+	:return: generated confirmation code SY-20234567899_4485599dfng
+	:rtype:str
+	"""
+	uid = str(uuid.uuid4()).replace('-', '')
+	return f"SY-{datetime.now().strftime('%Y%m%d%H%M%S')}_{uid[:14]}"
+
+
+def validate_email(email):
+	"""
+	check if email provide is a valid email
+	:param email:
+	:return: True is valid False otherwise
+	"""
+	try:
+		if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", email):
+			return True
+	except Exception as e:
+		lgr.error(f'validate_email : {e}')
+	return False
 
 
 def __error_403(response):

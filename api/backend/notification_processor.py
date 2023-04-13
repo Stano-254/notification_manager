@@ -5,8 +5,10 @@ sending out emails and sms
 import json
 import logging
 
-from api.backend.utils import generate_confirmation_key
-from core.backend.services import TemplateService, MessageTypeService, AppService
+from api.backend.email_sender import EmailSender
+from api.backend.utils import generate_confirmation_key, validate_email
+from core.backend.services import TemplateService, MessageTypeService, AppService, AppCredentialService, \
+	CorporateService
 
 lgr = logging.getLogger(__name__)
 
@@ -70,6 +72,28 @@ class Processor(object):
 			log_message = self.log_message(
 				app=app, destination=destination, message=message, source_ip=source_ip, request=request,
 				message_type=message_type, confirmation_code=confirmation_code, corporate_id=corporate_id)
+			if not log_message:
+				return {'code': '400.100.104'}
+			if str(message_type.name).upper() == "EMAIL":
+				if not validate_email(destination):
+					return {'code': '400.100.105'}
+				app_credentials = AppCredentialService().filter(
+					app=app, state__name="Active", message_type=message_type).first()
+				# corporate = CorporateService().get(core_id=corporate_id)
+				if not app_credentials:
+					return {'code': '400.100.106'}
+				from_address = app_credentials.email
+				name = (" - " + app_credentials.corporate.name) if app_credentials.corporate else ""
+				subject = f'Email Notification {name}' if not subject else subject
+				email = EmailSender().send_email(
+					recipient_email=destination, subject=subject, message=message, reply_to=from_address,
+					sender=app_credentials.sender_id, from_address=from_address, password=app_credentials.password)
+				if email.get('status', '') == 'success':
+					self.update_log_message(log_message=log_message,response=json.dumps(email))
+					return  {'code':'100.000.000','data':{'confirmation_code':confirmation_code}}
+				else:
+					self.update_log_message(log_message=log_message,status='failed', response=json.dumps(email))
+					return {'code':'400.100.107'}
 
 
 		except Exception as e:
@@ -77,5 +101,9 @@ class Processor(object):
 
 	@staticmethod
 	def log_message(app, destination, message, source_ip, request, message_type, confirmation_code, corporate_id, ):
+		pass
+		return 1
+	@staticmethod
+	def update_log_message(log_message,status='Complete',response=None):
 		pass
 		return 1
