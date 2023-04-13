@@ -224,3 +224,7 @@ class OAuth(BaseModel):
 
 	def __str__(self):
 		return f"{self.app} {self.access_token}"
+
+	class Meta:
+		verbose_name = 'OAuth'
+		verbose_name_plural = "OAuth"
