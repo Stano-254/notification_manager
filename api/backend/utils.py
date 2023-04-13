@@ -11,6 +11,10 @@ def get_client_ip(request):
 	return ip
 
 
+def generate_confirmation_key():
+	pass
+
+
 def __error_403(response):
 	return JsonResponse(response, content_type='application/json', status=403, safe=False)
 
