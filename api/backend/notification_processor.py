@@ -8,7 +8,7 @@ import logging
 from api.backend.email_sender import EmailSender
 from api.backend.utils import generate_confirmation_key, validate_email
 from core.backend.services import TemplateService, MessageTypeService, AppService, AppCredentialService, \
-	CorporateService
+	CorporateService, MessageLogService, StateService
 
 lgr = logging.getLogger(__name__)
 
@@ -89,21 +89,54 @@ class Processor(object):
 					recipient_email=destination, subject=subject, message=message, reply_to=from_address,
 					sender=app_credentials.sender_id, from_address=from_address, password=app_credentials.password)
 				if email.get('status', '') == 'success':
-					self.update_log_message(log_message=log_message,response=json.dumps(email))
-					return  {'code':'100.000.000','data':{'confirmation_code':confirmation_code}}
+					self.update_log_message(log_message=log_message, response=json.dumps(email))
+					return {'code': '100.000.000', 'data': {'confirmation_code': confirmation_code}}
 				else:
-					self.update_log_message(log_message=log_message,status='failed', response=json.dumps(email))
-					return {'code':'400.100.107'}
-
+					self.update_log_message(log_message=log_message, status='failed', response=json.dumps(email))
+					return {'code': '400.100.107'}
 
 		except Exception as e:
-			pass
+			lgr.exception(f"Failed to send the notification : {e}")
 
 	@staticmethod
-	def log_message(app, destination, message, source_ip, request, message_type, confirmation_code, corporate_id, ):
-		pass
-		return 1
+	def log_message(app, destination, message, source_ip, request, message_type, confirmation_code='',
+					corporate_id=None):
+		"""
+		Saves the message that is being transmitted to the database
+		:param app: message origin app
+		:param destination: recipient of the message
+		:param message: message content
+		:param source_ip: ip address of the sender
+		:param request: raw request form sender
+		:param message_type: messageType model object
+		:param confirmation_code:
+		:param corporate_id:
+		:return: created object
+		"""
+		try:
+			state = StateService().get(name="Active")
+			corporate = None
+			if corporate_id:
+				corporate = CorporateService().get(core_id=corporate_id)
+			return MessageLogService().create(
+				app=app, destination=destination, message=message, source_ip=source_ip, state=state, request=request,
+				message_type=message_type, confirmation_code=confirmation_code, corporate=corporate)
+		except Exception as e:
+			lgr.exception(f"Log message error : {e}")
+		return None
+
 	@staticmethod
-	def update_log_message(log_message,status='Complete',response=None):
-		pass
-		return 1
+	def update_log_message(log_message, status='Complete', response=None):
+		"""
+		updates the log message as failed or completed
+		:param log_message: transaction
+		:param status: transaction state,
+		:param response: feedback from notification sent
+		:return: LogMessage | None
+		"""
+		try:
+			state= StateService().get(name=str(status).title())
+			return MessageLogService().update(log_message.id, state=state,response=response)
+		except Exception as e:
+			lgr.exception(f"Failed to update transaction: {e}")
+		return None
