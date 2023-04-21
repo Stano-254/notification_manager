@@ -36,8 +36,8 @@ class Processor(object):
 			lgr.exception(f"replace tags Exception: {e}")
 
 	def send_message(
-			self, app_code, message_code, type_code, destination, request, replace_tags, source_ip, lang, corporate_id,
-			subject=None):
+			self, app_code, message_code, type_code, destination, request, replace_tags, source_ip, lang, corporate_id, cc,
+			subject=None, attachment=None):
 		"""
 		- verify and validates the params ,
 		- calls replace tags on the message
@@ -86,8 +86,8 @@ class Processor(object):
 				name = (" - " + app_credentials.corporate.name) if app_credentials.corporate else ""
 				subject = f'Email Notification {name}' if not subject else subject
 				email = EmailSender().send_email(
-					recipient_email=destination, subject=subject, message=message, reply_to=from_address,
-					sender=app_credentials.sender_id, from_address=from_address, password=app_credentials.password)
+					recipient_email=destination, subject=subject, message=message, reply_to=from_address, attachment=attachment,
+					sender=app_credentials.sender_id, from_address=from_address, cc=cc, password=app_credentials.password)
 				if email.get('status', '') == 'success':
 					self.update_log_message(log_message=log_message, response=json.dumps(email))
 					return {'code': '100.000.000', 'data': {'confirmation_code': confirmation_code}}
