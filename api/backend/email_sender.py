@@ -1,8 +1,11 @@
 import logging
 import smtplib
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
+from pathlib import Path
 
 lgr = logging.getLogger(__name__)
 
@@ -14,10 +17,11 @@ class EmailSender(object):
 
 	@staticmethod
 	def send_email(
-			recipient_email, subject, message, reply_to, cc=None, bcc=None, from_address='stanoemali87@gmail.com',
-			sender='stanoemali87@gmail.com', password='sffdbgdgbdsbg'):
+			recipient_email, subject, message, reply_to, cc=None, bcc=None, from_address='',
+			attachment=None, sender='', password=''):
 		"""
 		Send the Email
+		:param attachment: files to be sent as attachment
 		:param recipient_email: the of the recipient
 		:param subject: email subject
 		:param message: message send
@@ -52,15 +56,27 @@ class EmailSender(object):
 				toaddrs = toaddrs + cc
 			if bcc:
 				toaddrs = toaddrs + bcc
+			if attachment:
+				for f in attachment or []:
+					part = MIMEBase('application', "octet-stream")
+					with open(f, 'rb') as fil:
+						part.set_payload(fil.read())
+					encoders.encode_base64(part)
+					part.add_header('Content-Disposition', 'attachment; filename={}'.format(Path(f).name))
+					msg.attach(part)
 			server = smtplib.SMTP('smtp.gmail.com:587')
 			server.ehlo()
 			server.starttls()
 			server.ehlo()
 			server.set_debuglevel(0)
+			print(f"sender {sender} password {password}")
 			server.login(sender, password)
 			server.sendmail(from_address, toaddrs, msg.as_string())
 			server.close()
+			print("message sent")
 			return {'status': "success", 'message': 'Email sent successfully'}
+
 		except Exception as e:
-			lgr.exception(f"Error during email send of message")
-			return {'status': 'failed', 'message': 'Error sending the email: %s' % e}
+			lgr.exception(f"Error during email send of message {e}")
+			print("message failed")
+			return {'status': 'failed', 'message': f'Error sending the email: {e}'}

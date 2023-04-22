@@ -155,7 +155,7 @@ class Corporate(GenericBasemodel):
 	Defines different corporate
 	"""
 	core_id = models.CharField(max_length=100)
-	provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
+	provider = models.ForeignKey(Provider, null=True, blank=True, on_delete=models.CASCADE)
 	state = models.ForeignKey(State, on_delete=models.CASCADE)
 
 	def __str__(self):
@@ -197,7 +197,7 @@ class AppCredential(BaseModel):
 	org_id = models.CharField(max_length=100, blank=True, null=True)
 	user_id = models.CharField(max_length=50, blank=True, null=True, help_text='either user id or sender code')
 	balance = models.CharField(max_length=20, blank=True, null=True)
-	email = models.CharField(max_length=20, blank=True, null=True)
+	email = models.CharField(max_length=150, blank=True, null=True)
 	state = models.ForeignKey(State, on_delete=models.CASCADE)
 
 	def __str__(self):
@@ -219,7 +219,8 @@ class OAuth(BaseModel):
 	"""
 	app = models.ForeignKey(App, on_delete=models.CASCADE)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	access_token = models.DateTimeField(default=token_expiry())
+	access_token = models.CharField(max_length=200, blank=True, null=True)
+	expires_at = models.DateTimeField(default=token_expiry())
 	state = models.ForeignKey(State, on_delete=models.CASCADE)
 
 	def __str__(self):
