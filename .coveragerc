@@ -3,7 +3,7 @@ omit=
     *apps.py,
     */migrations/*,
     *settings*,
-    *tests/*,
+    */tests/*,
     *tests.py,
     *urls.py,
     *env/*,
