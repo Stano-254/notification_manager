@@ -10,16 +10,7 @@ from api.backend.utils import json_super_serializer
 
 
 def send_notification(notifications):
-	"""
-	Sends notifications through the Notifications Bus. The notifications are passed in as a list of dictionaries
-	which it then evaluates and makes the http calls
-	@param notifications: list of dictionaries for notifications to be sent
-	@type notifications: list
-	@param trans: The transaction that the notifications are sent against
-	@type trans: Transaction Model object
-	@return: None
-	@rtype: None
-	"""
+
 	try:
 		if not notifications:
 			return None
