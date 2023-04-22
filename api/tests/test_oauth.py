@@ -2,7 +2,7 @@ import json
 
 from mixer.backend.django import mixer
 from django.contrib.auth.models import User
-from django.test import Client, RequestFactory
+from django.test import RequestFactory
 from api.decorators import authentication_wrapper
 from api.oauth import OAuth
 import pytest
@@ -24,7 +24,7 @@ class TestOAUTH(object):
 		assert OAuth.get_valid_account_access_token(user=self.user) is not None, 'Should return an Oauth object'
 
 	def test_authentication_wrapper(self):
-		user = mixer.blend(User, password="Cosmic3421$#", username="ecommerce")
+		mixer.blend(User, password="Cosmic3421$#", username="ecommerce")
 		state = mixer.blend('core.State', name="Active")
 		mixer.blend('core.App', name='Ecommerce', state=state, id="5369a2c6-bd9f-4d90-9575-bc0bab87b1c5")
 		res_data = {
