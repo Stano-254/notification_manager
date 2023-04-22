@@ -28,6 +28,7 @@ def send_message(request):
 			files = []
 			count = 1
 			for file in request.FILES:
+				file = request.FILES[file]
 				print(f"file no {count}, file {file.name}")
 				fs = FileSystemStorage(fs_path)
 				fs.save(file.name, file)

@@ -17,10 +17,11 @@ class EmailSender(object):
 
 	@staticmethod
 	def send_email(
-			recipient_email, subject, message, reply_to, cc=None, bcc=None, from_address='stanoemali87@gmail.com',
-			attachment=None, sender='stanoemali87@gmail.com', password='qisiebnrbeudsopr'):
+			recipient_email, subject, message, reply_to, cc=None, bcc=None, from_address='',
+			attachment=None, sender='', password=''):
 		"""
 		Send the Email
+		:param attachment: files to be sent as attachment
 		:param recipient_email: the of the recipient
 		:param subject: email subject
 		:param message: message send
@@ -76,6 +77,6 @@ class EmailSender(object):
 			return {'status': "success", 'message': 'Email sent successfully'}
 
 		except Exception as e:
-			lgr.exception(f"Error during email send of message")
+			lgr.exception(f"Error during email send of message {e}")
 			print("message failed")
-			return {'status': 'failed', 'message': 'Error sending the email: %s' % e}
+			return {'status': 'failed', 'message': f'Error sending the email: {e}'}
