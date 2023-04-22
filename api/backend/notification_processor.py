@@ -60,7 +60,9 @@ class Processor(object):
 			# get message construction
 			right_now = datetime.now()
 			t = right_now.strftime("%Y-%m-%d %H:%M:%S")
-			template_message = Templates().get_template(message_data.get("message_template"), message_data.get("message"))
+			new_data = json.loads(message_data)
+			print(new_data)
+			template_message = Templates().get_template(new_data.get("message_template"), new_data.get("message"))
 			replace_tags = {
 				"message": template_message,
 				'date': 'Generated', 'time': t
