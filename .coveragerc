@@ -1,3 +1,3 @@
 [run]
-omit = omit=*apps.py,*/migrations/*,*settings*,*/tests/*,*tests.py,*urls.py,*env/*,*venv/*, */__init__.py,*/asgi.py,
+omit=*apps.py,*/migrations/*,*settings*,*/tests/*,*tests.py,*urls.py,*env/*,*venv/*, */__init__.py,*/asgi.py,
 *wsgi.py,*services.py,*servicebase.py,*/apps.py, manage.py
