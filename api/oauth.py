@@ -1,5 +1,5 @@
 import logging
-
+from django.db.utils import OperationalError
 from api.backend.utils import generate_token
 from django.utils import timezone
 from core.backend.services import OAuthService, StateService
@@ -22,14 +22,15 @@ class OAuth(object):
 		try:
 			if access_app:
 				try:
-					OAuthService().filter(app=access_app,user=user).delete()
-				except Exception as e:
-					pass
+					OAuthService().filter(app=access_app, user=user).delete()
+				except OperationalError as err:
+					lgr.exception(f"Unable to get auth data:{err}")
 				return OAuthService().create(
 					user=user, app=access_app, access_token=generate_token(),
 					state=StateService().get(name="Active"))
-		except Exception as e:
+		except OperationalError as e:
 			lgr.exception(f'generate_account_token:Exception {e}')
+		return None
 
 	@staticmethod
 	def get_valid_account_access_token(user):
