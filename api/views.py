@@ -1,13 +1,23 @@
+import calendar
+
 from api.backend.notification_processor import Processor
 from django.core.files.storage import FileSystemStorage
-from api.backend.utils import get_client_ip
+from django.views.decorators.csrf import csrf_exempt
+from api.backend.utils import get_client_ip, __error_400, __response, __success, __error_500
+from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.conf import settings
 import logging
 
+from api.decorators import authentication_wrapper
+from api.oauth import OAuth
+from core.backend.services import AppService
+
 lgr = logging.getLogger(__name__)
 
 
+@authentication_wrapper
+@csrf_exempt
 def send_message(request):
 	try:
 		request_data = request.POST.copy()
@@ -35,3 +45,40 @@ def send_message(request):
 
 	except Exception as e:
 		lgr.exception(f"error during send message:{e}")
+
+
+def get_access_token(request):
+	"""
+	get user access token
+	:param request:
+	:return:
+	"""
+	try:
+		if request.method == "POST":
+			username = request.POST.get('username', None)
+			client_secret = request.POST.get('client_secret', None)
+			client_id = request.POST.get('client_id', None)
+			app = AppService().get(id=client_id, state__name="Active")
+			data = None
+			if app:
+				user = authenticate(username=username, password=client_secret)
+				if user:
+					auth = OAuth().generate_account_token(access_app=app, user=user)
+					if auth:
+						try:
+							auth = OAuth.get_valid_account_access_token(user)
+							if not auth:
+								raise Exception
+							data = {
+								'token': str(auth.access_token),
+								'expires': str(calendar.timegm(auth.expires_at.timetuple()))
+							}
+						except Exception as e:
+							lgr.error(f'login Exception {e}')
+							return __error_400(__response("failed", "invalid login attempt"))
+			return __success(__response("success", "Successfully logged in user.", data))
+		return __error_400(__response('failed', 'Invalid login attempt'))
+
+	except Exception as e:
+		lgr.error(f'login Exception:{e}')
+	return __error_500(__response('failed', 'wrong request'))
