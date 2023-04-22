@@ -38,7 +38,8 @@ class Processor(object):
 			lgr.exception(f"replace tags Exception: {e}")
 
 	def send_message(
-			self, app_code, message_code, type_code, destination, request, message_data, source_ip, lang, corporate_id, cc,
+			self, app_code, message_code, type_code, destination, request, message_data, source_ip, lang, corporate_id,
+			cc,
 			subject=None, attachment=None):
 		"""
 		- verify and validates the params ,
@@ -97,7 +98,8 @@ class Processor(object):
 				name = (" - " + app_credentials.corporate.name) if app_credentials.corporate else ""
 				subject = f'Email Notification {name}' if not subject else subject
 				email = EmailSender().send_email(
-					recipient_email=destination, subject=subject, message=message, reply_to=from_address, attachment=attachment,
+					recipient_email=destination, subject=subject, message=message, reply_to=from_address,
+					attachment=attachment,
 					sender=app_credentials.email, from_address=from_address, cc=cc, password=app_credentials.password)
 				if email.get('status', '') == 'success':
 					self.update_log_message(log_message=log_message, response=json.dumps(email))
@@ -146,8 +148,8 @@ class Processor(object):
 		:return: LogMessage | None
 		"""
 		try:
-			state= StateService().get(name=str(status).title())
-			return MessageLogService().update(log_message.id, state=state,response=response)
+			state = StateService().get(name=str(status).title())
+			return MessageLogService().update(log_message.id, state=state, response=response)
 		except Exception as e:
 			lgr.exception(f"Failed to update transaction: {e}")
 		return None
