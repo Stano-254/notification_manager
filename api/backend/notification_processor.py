@@ -39,20 +39,21 @@ class Processor(object):
 
 	def send_message(
 			self, app_code, message_code, type_code, destination, request, message_data, source_ip, lang, corporate_id,
-			cc,
-			subject=None, attachment=None):
+			cc, subject=None, attachment=None):
 		"""
 		- verify and validates the params ,
 		- calls replace tags on the message
 		- send the message after creating the record in database
+		:param cc: carbon copy recipient
 		:param app_code: application identifier
 		:param message_code: message code to be used
 		:param type_code: message type to used SMS or EMAIL
 		:param destination: recipient of the message
 		:param request: raw request from sender / application
-		:param replace_tags: dictionary of message with data to be replaced
+		:param message_data: dictionary of message with data to be replaced
 		:param source_ip: ip address of the sender
 		:param lang: language of the template to use
+		:param attachment: file attachments
 		:param corporate_id: organization id
 		:param subject: the subject of the Message
 		:return: response code
@@ -112,8 +113,8 @@ class Processor(object):
 			lgr.exception(f"Failed to send the notification : {e}")
 
 	@staticmethod
-	def log_message(app, destination, message, source_ip, request, message_type, confirmation_code='',
-					corporate_id=None):
+	def log_message(
+			app, destination, message, source_ip, request, message_type, confirmation_code='', corporate_id=None):
 		"""
 		Saves the message that is being transmitted to the database
 		:param app: message origin app
