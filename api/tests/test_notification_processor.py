@@ -31,9 +31,9 @@ class TestNotificationProcessor(object):
 			'core.AppCredential', app=app, email='stanoemali87@gmail.com', password="qisiebnrbeudsopr",
 			message_type=message_type, state=state)
 		mixer.blend(
-			'core.Template', code='1345', state=state, en='Hello [salutation], welcome to the team'
+			'core.Template', code='1345', state=state, en='[message]'
 		)
-		destination = 'herydarker4@gmail.com'
+		destination = 'henrydarker4@gmail.com'
 		source_ip = "127.0.0.1"
 		message_data = {
 			"message_template": "em001",
