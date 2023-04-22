@@ -38,7 +38,7 @@ class TestNotificationProcessor(object):
 		message_data = {
 			"message_template": "em001",
 			"message": {
-				"salution": "John",
+				"salutation": "John",
 				"corporate": "Menengai limited"
 			}
 		}
