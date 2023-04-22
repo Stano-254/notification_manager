@@ -219,7 +219,8 @@ class OAuth(BaseModel):
 	"""
 	app = models.ForeignKey(App, on_delete=models.CASCADE)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
-	access_token = models.DateTimeField(default=token_expiry())
+	access_token = models.CharField(max_length=200, blank=True, null=True)
+	expires_at = models.DateTimeField(default=token_expiry())
 	state = models.ForeignKey(State, on_delete=models.CASCADE)
 
 	def __str__(self):

@@ -23,7 +23,7 @@ def send_message(request):
 		request_data = request.POST.copy()
 		source_ip = get_client_ip(request)
 		files = None
-		if request_data("attached", False):
+		if request_data.get("attached", False):
 			fs_path = settings.TEMP_CONTENT_ROOT
 			files = []
 			count = 1
@@ -36,8 +36,8 @@ def send_message(request):
 
 		return JsonResponse(Processor().send_message(
 			destination=request_data.get('destination', None), type_code=request_data.get('message_type', None),
-			request=request_data, replace_tags=request_data.get('replace_tags', None), source_ip=source_ip,
-			app_code=request.get('app_code', None), message_code=request_data.get('message_code', None),
+			request=request_data, message_data=request_data.get('message_data', None), source_ip=source_ip,
+			app_code=request_data.get('app_code', None), message_code=request_data.get('message_code', None),
 			lang=request_data.get('lang', None), attachment=files, cc=request_data.get("cc", None),
 			corporate_id=request_data.get('corporate_id', request_data.get('organization_id', '')),
 			subject=request_data.get('subject', None)
@@ -46,7 +46,7 @@ def send_message(request):
 	except Exception as e:
 		lgr.exception(f"error during send message:{e}")
 
-
+@csrf_exempt
 def get_access_token(request):
 	"""
 	get user access token
@@ -66,13 +66,14 @@ def get_access_token(request):
 					auth = OAuth().generate_account_token(access_app=app, user=user)
 					if auth:
 						try:
-							auth = OAuth.get_valid_account_access_token(user)
+							auth = OAuth().get_valid_account_access_token(user)
 							if not auth:
 								raise Exception
 							data = {
 								'token': str(auth.access_token),
 								'expires': str(calendar.timegm(auth.expires_at.timetuple()))
 							}
+							print(data)
 						except Exception as e:
 							lgr.error(f'login Exception {e}')
 							return __error_400(__response("failed", "invalid login attempt"))

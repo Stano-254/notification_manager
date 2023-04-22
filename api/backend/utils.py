@@ -111,7 +111,7 @@ def generate_token():
 	@rtype: str | None
 	"""
 	try:
-		return base64.b64encode(binascii.hexlify(os.urandom(15)).decode())
+		return base64.b64encode(binascii.hexlify(os.urandom(15))).decode()
 	except Exception as e:
 		lgr.exception('generate_token Exception: %s', e)
 	return None
@@ -135,3 +135,22 @@ def __success(response):
 
 def __response(status, message, data=None):
 	return {'status': status, 'message': message, "data": data}
+
+
+def call_class_method(self, class_instance, function_name, **kwargs):
+	"""
+	Calls the given method on the class instance provided passing in the kwargs
+	@param class_instance: The instance of the class to call a function in.
+	@type class_instance: object
+	@param function_name: The function name to call on the class.
+	@type function_name: str
+	@param kwargs: The arguments to pass to the class method.
+	@return: The results of processing the function on the class.
+	@rtype: object
+	"""
+	try:
+		return getattr(class_instance, function_name)(**kwargs)
+	except Exception as e:
+		lgr.exception('%s call_class_method Exception: %s', self.__class__.__name__, e)
+	return None
+

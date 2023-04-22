@@ -68,10 +68,14 @@ class EmailSender(object):
 			server.starttls()
 			server.ehlo()
 			server.set_debuglevel(0)
+			print(f"sender {sender} password {password}")
 			server.login(sender, password)
 			server.sendmail(from_address, toaddrs, msg.as_string())
 			server.close()
+			print("message sent")
 			return {'status': "success", 'message': 'Email sent successfully'}
+
 		except Exception as e:
 			lgr.exception(f"Error during email send of message")
+			print("message failed")
 			return {'status': 'failed', 'message': 'Error sending the email: %s' % e}
